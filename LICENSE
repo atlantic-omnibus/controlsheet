@@ -1,7 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--ControlSheet
-
 Copyright (c) 2019 Attila Orosz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -18,16 +14,4 @@ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
-THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape
-            android:innerRadius="0dp"
-            android:shape="ring"
-            android:thickness="4dp"
-            android:useLevel="false">
-            <solid android:color="?attr/colorAccent"/>
-        </shape>
-    </item>
-</layer-list>
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

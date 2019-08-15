@@ -37,6 +37,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,15 +63,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-
-
-/**
- *  ToDo: main PoA
- *   - [ ] Push top GitLab and GitHub
- *      - [ ] Open an enhanceent ticket about samitising the loading of Drawables
- *   - [ ] Add Unit tests
- *   - [ ] Release to the wild
- */
 
 /**
  * <p>An easy to use {@code BottomSheet} widget with a predefined {@link ViewPager}, a "control strip"
@@ -236,7 +228,9 @@ public class ControlSheet extends LinearLayout {
                             NO_ANIMATION              =   0, // It's like having animation, only not.
                             SPIN_BUTTON               =   1, // The button will spin, (and magically change shapes mid-spin, if it1s the control button)
                             DIP_BUTTON                =   2, // The button will have a "dip" effect
-                            BUTTON_ANIMATION_DURATION = 300; // Not very fast, but not very slow either. just right
+                            BUTTON_ANIMATION_DURATION = 300, // Not very fast, but not very slow either. just right
+                            NATURAL                  =    1, // Natural numbering mode, staring from 1
+                            ZERO_BASED                =   0; // "Traditional" zero based numbering mode, starting from 0
 
     private ViewPager viewPager;                        // A pager of views. (Or is it a view of pagers??)
     private ConstraintLayout controlStripLayout;        // This is the controlstrip itself
@@ -255,7 +249,8 @@ public class ControlSheet extends LinearLayout {
                 vpSizeLimit,               // The number of pages the virewpager can have. Since they need to be held in memory
                 buttonAnimationStyle,      // Spin or dip or none
                 customCollapsedDrawableId, // When controlSheetButton's stle is cutsom, you cna set a your own drawable.
-                customExpandedDrawableId;  // When controlSheetButton's stle is cutsom, you cna set a your own drawable.
+                customExpandedDrawableId,  // When controlSheetButton's stle is cutsom, you cna set a your own drawable.
+                numberingModeOffset;             // Where to start numbers from
 
     private Drawable sheetCollapsedButtonDrawable, // The Drawable from the id above
                      sheetExpandedButtondrawable;  // The Drawable from the id above
@@ -287,6 +282,13 @@ public class ControlSheet extends LinearLayout {
     }
 
     /** @hide **/
+    @IntDef({NATURAL, ZERO_BASED})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface NumberingMode {
+    }
+
+
+    /** @hide **/
     @IntDef({TypedValue.COMPLEX_UNIT_PX, TypedValue.COMPLEX_UNIT_DIP, TypedValue.COMPLEX_UNIT_SP,
             TypedValue.COMPLEX_UNIT_PT, TypedValue.COMPLEX_UNIT_IN, TypedValue.COMPLEX_UNIT_MM})
     @Retention(RetentionPolicy.SOURCE)
@@ -315,6 +317,7 @@ public class ControlSheet extends LinearLayout {
         controlButtonStyle = COGWHEEL;
         vpSizeLimit = DEFAULT_VIEWPAGER_SIZE_LIMIT;
         buttonAnimationStyle = SPIN_BUTTON;
+        numberingModeOffset = ZERO_BASED;
         initSheet(context);
     }
 
@@ -337,6 +340,7 @@ public class ControlSheet extends LinearLayout {
         controlButtonStyle = COGWHEEL;
         vpSizeLimit = DEFAULT_VIEWPAGER_SIZE_LIMIT;
         buttonAnimationStyle = SPIN_BUTTON;
+        numberingModeOffset = ZERO_BASED;
         initSheet(context);
     }
 
@@ -376,6 +380,8 @@ public class ControlSheet extends LinearLayout {
      * @param attrs he Attributes to read
      */
     private void getAttributes(Context context, AttributeSet attrs) {
+
+        numberingModeOffset = ZERO_BASED; //This is currently not settable from XML, because it concerns code, really
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
@@ -530,6 +536,23 @@ public class ControlSheet extends LinearLayout {
 
 
     /**
+     * <p>Set up how positions and similar numbers will be treated 0 based or "natural."</p>
+     *
+     * <p>There are two valid modes {@link ControlSheet#ZERO_BASED} ({@value ControlSheet#ZERO_BASED}), which means the
+     * first number is 0 as in traditional software developemtn, 0 marking the first position, and
+     * {@link ControlSheet#NATURAL} ({@value ControlSheet#NATURAL}) meaning a more intuitive system, where the 1st position is 1.</p>
+     *
+     * <p>The default is zero based so that people don1t get pissed off expecting 0 to mean 1...</p>
+     *
+     * @param mode Either {@link ControlSheet#ZERO_BASED} or {@link ControlSheet#NATURAL}
+     * @return A {@link ControlSheet} object for method chaining
+     */
+    public ControlSheet setNumberingMode(@NumberingMode int mode){
+        numberingModeOffset = mode;
+        return this;
+    }
+
+    /**
      * Does what it says.
      *
      * @param elevation Elevation to set
@@ -645,6 +668,7 @@ public class ControlSheet extends LinearLayout {
 
     /**
      * <p>Sets the {@link ViewPager's} size limit, that is the maximum pages it can hold. </p>
+     *
      * <p>Size limit is necessary to avoid using too much memeory. Since the {@link WrappingViewPager} that is used will
      * set its size according to its children, we need to kep the children in memory to avoid changing sizes on paging
      * (so the {@link ViewPager} will conform to the tallest child and keep tis height. If the children were to be dynamically loaded,
@@ -699,7 +723,7 @@ public class ControlSheet extends LinearLayout {
      * @param layoutId The id of the layout to add
      * @param position The position t add the layout to (starting form 1)
      */
-    public ControlSheet addSheetPagerLayout(int layoutId, @IntRange(from=1)  int position){
+    public ControlSheet addSheetPagerLayout(int layoutId, @IntRange(from=0)  int position){
         return handlePagerLayouts(layoutId, position, false);
     }
 
@@ -711,7 +735,7 @@ public class ControlSheet extends LinearLayout {
      * @param position The position of the layout to remove (starting from 1)
      * @return A {@link ControlSheet} object for method chaining
      */
-    public ControlSheet removeSheetPagerLayout(@IntRange(from=1) int position){
+    public ControlSheet removeSheetPagerLayout(@IntRange(from=0) int position){
         return handlePagerLayouts(ZILCH_NADA_NIL_BUT_NOT_ZERO, position, true);
     }
 
@@ -731,9 +755,9 @@ public class ControlSheet extends LinearLayout {
      * @param position The position of the layout to get the id of (starting from 1)
      * @return The id of the layout in the specified position, or 0 if the position is not valid
      */
-    public int getSheetPagerLayoutIdAtPosition(@IntRange(from=1) int position){
+    public int getSheetPagerLayoutIdAtPosition(@IntRange(from=0) int position){
         if(position<=vpSizeLimit) {
-            return layoutIds.get(position - 1);
+            return layoutIds.get(position - numberingModeOffset);
         } else {
             Log.e("ControlSheet", "getSheetPagerLayoutIdAtPosition(): 'position' exceeds maximum number of pages (Currently: " + vpSizeLimit + ")");
             return 0;
@@ -747,6 +771,42 @@ public class ControlSheet extends LinearLayout {
      */
     public ViewPager getViewPager(){
         return viewPager;
+    }
+
+
+    /**
+     * Returns a {@link List<Object>} of all {@link ViewPager} children from all of its pages
+     *
+     * @returna {@link List<Object>} of all {@link ViewPager} children from all of its pages
+     */
+    public List<Object> getAllPagerItems(){
+
+        List<Object> result= new ArrayList<>();
+
+        for (int pageNumber=0; pageNumber<viewPager.getChildCount(); pageNumber++) {
+            for (int i = 0; i < ((ViewGroup) viewPager.getChildAt(pageNumber)).getChildCount(); i++) {
+                result.add(((ViewGroup) viewPager.getChildAt(pageNumber)).getChildAt(i));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns a {@link List<Object>} of all {@link ViewPager} children from the specified page only
+     *
+     * @param pageNumber to return items from
+     * @return a {@link List<Object>} of all {@link ViewPager} children from the specified page
+     */
+    public List<Object> getPagerItemsByPage(@IntRange(from=0) int pageNumber){
+
+        List<Object> result= new ArrayList<>();
+
+        for (int i = 0; i < ((ViewGroup) viewPager.getChildAt(pageNumber)).getChildCount(); i++) {
+            result.add(((ViewGroup) viewPager.getChildAt(pageNumber)).getChildAt(i));
+        }
+
+        return result;
     }
 
 
@@ -813,9 +873,9 @@ public class ControlSheet extends LinearLayout {
 
         if(removing){
             if(position>0 && position<=layoutIds.size()) {
-                layoutIds.remove(position-1);
-                if(viewPager.getCurrentItem()==position-1 && position>1){
-                    viewPager.setCurrentItem(position-2, true);
+                layoutIds.remove(position-numberingModeOffset);
+                if(viewPager.getCurrentItem()==position-numberingModeOffset && position>1){
+                    viewPager.setCurrentItem(position-numberingModeOffset-1, true);
                 }
                 viewPager.setAdapter(null);
             }
@@ -824,7 +884,7 @@ public class ControlSheet extends LinearLayout {
                 Log.e("ControlSheet", "Maximum number of pages reached (Currently: " + vpSizeLimit + ")");
             } else {
                 if (position > 0) {
-                    layoutIds.add(position - 1, id);
+                    layoutIds.add(position - numberingModeOffset, id);
                 } else {
                     layoutIds.add(id);
                 }
@@ -999,9 +1059,9 @@ public class ControlSheet extends LinearLayout {
      * @param isEnabled boolean value {@code true} for enabled and {@code false} for disabled
      * @return A {@link ControlSheet} object for method chaining
      */
-    public ControlSheet setControlStripButtonEnabled(@IntRange(from=1) int position, boolean isEnabled){
+    public ControlSheet setControlStripButtonEnabled(@IntRange(from=0) int position, boolean isEnabled){
         if (position < controlStripLayout.getChildCount()) {
-            controlStripLayout.findViewById(stripButtons.get(position - 1).getId()).setEnabled(isEnabled);
+            controlStripLayout.findViewById(stripButtons.get(position - numberingModeOffset).getId()).setEnabled(isEnabled);
         } else {
             Log.e("ControlStrip", "You ain't got that many buttons either!");
         }
@@ -1017,9 +1077,9 @@ public class ControlSheet extends LinearLayout {
      * @param position of the button to get (startng from 1)
      * @return A {@link ControlStripButton} object
      */
-    public ControlStripButton getControlStripButton(@IntRange(from=1) int position){
+    public ControlStripButton getControlStripButton(@IntRange(from=0) int position){
         if (position < controlStripLayout.getChildCount()) {
-            return controlStripLayout.findViewById(stripButtons.get(position - 1).getId());
+            return controlStripLayout.findViewById(stripButtons.get(position - numberingModeOffset).getId());
         } else {
             Log.e("ControlStrip", "You ain't got that many buttons either!");
             return null;
@@ -1034,9 +1094,9 @@ public class ControlSheet extends LinearLayout {
      * @param position Position of the butotn to check 8starting form 1)
      * @return boolean of the button's "enabledness"
      */
-    public boolean controlStripButtonIsEnabled(@IntRange(from=1) int position){
+    public boolean controlStripButtonIsEnabled(@IntRange(from = 0) int position){
         if (position < controlStripLayout.getChildCount()) {
-            return controlStripLayout.findViewById(stripButtons.get(position - 1).getId()).isEnabled();
+            return controlStripLayout.findViewById(stripButtons.get(position - numberingModeOffset).getId()).isEnabled();
         } else {
             Log.e("ControlStrip", "You ain't got that many buttons either!");
             return false;
@@ -1051,9 +1111,9 @@ public class ControlSheet extends LinearLayout {
      * @param position of the button to get {@link Drawable} of (starting from 1)
      * @return {@link Drawable} that is set on  the button
      */
-    public Drawable getControlStripButtonDrawable(@IntRange(from=1) int position){
+    public Drawable getControlStripButtonDrawable(@IntRange(from = 0) int position){
         if (position < controlStripLayout.getChildCount()) {
-            return stripButtons.get(position - 1).getDrawable();
+            return stripButtons.get(position - numberingModeOffset).getDrawable();
         } else {
             Log.e("ControlStrip", "You ain't got that many buttons either!");
             return null;
@@ -1067,10 +1127,10 @@ public class ControlSheet extends LinearLayout {
      *
      * @param position of the butotn to remove (starting from 1)
      */
-    public ControlSheet removeControlStripButton(@IntRange(from=1) int position){
+    public ControlSheet removeControlStripButton(@IntRange(from = 0) int position){
         if (position < controlStripLayout.getChildCount()) {
-            controlStripLayout.removeView(controlStripLayout.findViewById(stripButtons.get(position - 1).getId()));
-            stripButtons.remove(position - 1);
+            controlStripLayout.removeView(controlStripLayout.findViewById(stripButtons.get(position - numberingModeOffset).getId()));
+            stripButtons.remove(position - numberingModeOffset);
             return setControlStripConstraints();
         } else {
             Log.e("ControlStrip", "You ain't got that many buttons either!");

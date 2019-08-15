@@ -1,11 +1,11 @@
 An easy to use BottomSheet widget with a predefined ` ViewPager`, a "control strip"
 with dynamic buttons and many convenient methods
  
-*Add images*
+*ToDo: Add screenhots*
 
 ### How to get it
 
-*Add Jcenter info*
+*ToDo: Add Jcenter info*
 
 ### Usage
 
@@ -16,36 +16,36 @@ else is optional, and can alo be set from code, like below. (Or default values w
 
 #### From XML
 
- ```XML
+```XML
 &lt;com.atlanticomnibus.controlsheet.ControlSheet
     android:id="@+id/control_sheet"
     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
+    android:layout_height="wrap_content"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" /&gt;
- ```
+```
  
 You can also specify various properties from the XML. One convenient attribute is a commas separated list of
 the layout IDs for all the layouts you want to include in the viewpager. You only need to provide the IDs,
 and everything will be set up automatically. the syntax is similar to what you can see in e.g. ` ConstraintLayout`
  
- ```XML
-    app:layout_ids="page_1,page_2, page_3"
- ```
+```XML
+app:layout_ids="page_1,page_2, page_3"
+```
  
 Note that yu can set up to 5 pages, above which, you have to manually raise th limit:
    
- ```XML
-    app:viewpager_max_pages="6"
- ```
+```XML
+app:viewpager_max_pages="6"
+```
  
 Other XML attributes include:
  
- ```XML
+```XML
     app:button_color="@color/button_color"
     app:button_animation_style="none|dip|spin"
     app:sheet_control_button_style="none|cogwheel|chevron|custom"
     app:show_control_strip="true|false"
- ```
+```
  
 Note that if you set the ` sheet_control_button_style` to "custom", you can specify drawable IDs
 for the collapsed and expanded states of the sheet. If you don1t specify either of of these, it will be set to the
@@ -69,12 +69,12 @@ When you get a reference to your control sheet, you can keep chaining most metho
 #### From code
 
    
-get a reference to the `ControlSheet`
+Get a reference to the `ControlSheet`
 
 ```Java
-   int[] layoutIds={R.layout.layout_1,R.layout.layout_2,R.layout.layout_3,R.layout.layout_4,R.layout.layout_5} // Set up an array of layout ids
+int[] layoutIds={R.layout.layout_1,R.layout.layout_2,R.layout.layout_3,R.layout.layout_4,R.layout.layout_5} // Set up an array of layout ids
  
-   ControlSheet controlSheet= findViewById(R.id.control_sheet); // Find our ` ControlSheet`
+ControlSheet controlSheet= findViewById(R.id.control_sheet); // Find our ` ControlSheet`
 ``` 
 
 Manage the viewpager's layouts from code 
@@ -101,7 +101,7 @@ Manage the sheet's control button
 
 ```Java
 controlSheet.setSheetControlButton(ControlSheet.CHEVRON)                             // Changes the conrtl button style to a chevron
-              .setSheetControlButton(ControlSheet.NO_BUTTON)                           // Disables the control button
+            .setSheetControlButton(ControlSheet.NO_BUTTON)                           // Disables the control button
             .setSheetControlButton(ControlSheet.CUSTOM)                              // Sets the control button style to custom
             .setCustomCollapsedButtonDrawableId(R.drawable_control_button_collapsed) // Sets the button for the collapsed sheet
             .setCustomExpandedButtonDrawableId(R.drawable_control_button_expanded)   // Sets the button for the expanded sheet
@@ -120,10 +120,10 @@ controlSheet.addControlStripButton(R.drawable.button_1, buttonOneOnclickListener
             .setButtonAnimationStyle(ControlSheet.SPIN_BUTTON                     // Resets button pressed animation to the default ` ControlSheet#SPIN_BUTTON`
 ```
  
-  To know when the built-in ` ViewPager` is ready, you need to set a ` ControlSheetInflatedListener`
-  It's easiest to have the calling class or activity implement this interface, and directly override its single method
-  ` ControlSheetInflatedListener#onControlSheetInflated`, which will then pass down the inflated and laid out ` ViewPager`
-  whenever it's ready.
+To know when the built-in ` ViewPager` is ready, you need to set a ` ControlSheetInflatedListener`
+It's easiest to have the calling class or activity implement this interface, and directly override its single method
+` ControlSheetInflatedListener#onControlSheetInflated`, which will then pass down the inflated and laid out ` ViewPager`
+whenever it's ready.
  
 ```Java
 public class MainActivity extends AppCompatActivity implements ControlSheetInflatedListener {

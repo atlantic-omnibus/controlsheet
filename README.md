@@ -5,7 +5,43 @@ with dynamic buttons and many convenient methods
 
 ### How to get it
 
-*ToDo: Add Jcenter info*
+#### Jfrog Bintray
+
+ [ ![Download](https://api.bintray.com/packages/atlantic-omnibus/androidosslibs/controlsheet/images/download.svg) ](https://bintray.com/atlantic-omnibus/androidosslibs/controlsheet/_latestVersion)
+
+#### Jcenter
+
+Make sure you have `jcenter()` in your project level `build.gradle`, like so:
+
+```Gradle
+buildscript {
+    repositories {
+    
+        /*...*/
+        
+        jcenter()
+        
+        /*...*/
+    }
+    
+    /*...*/
+} 
+``` 
+
+Then in your app/module level `build.gradle`:
+    
+```Gradle
+dependencies {
+
+    /*...*/
+    
+    implementation 'com.atlanticomnibus.androidosslibs:controlsheet:1.0.1'
+
+    
+    /*...*/
+     
+} 
+```
 
 ### Usage
 

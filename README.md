@@ -1,7 +1,7 @@
 An easy to use BottomSheet widget with a predefined `ViewPager`, a "control strip"
 with dynamic buttons and many convenient methods
  
-*ToDo: Add screenhots*
+*ToDo: Add screenshots*
 
 ### How to get it
 
@@ -57,7 +57,7 @@ default cogwheel style. If you only specify one, the other will be set to the de
 ```
  
 If you turn off the control strip (by setting `show_control_strip` to "false), you might want to manually
-set a peek-height, otherwise you will onyl be able to programmatically expand the Sheet, e.g.:
+set a peek-height, otherwise you will only be able to programmatically expand the Sheet, e.g.:
    
 ```XML
     app:sheet_peek_height="@dimen/sheet_peek_height"
@@ -100,12 +100,12 @@ controlSheet.setHasControlStrip(false)                       // Turns off the co
 Manage the sheet's control button
 
 ```Java
-controlSheet.setSheetControlButton(ControlSheet.CHEVRON)                             // Changes the conrtl button style to a chevron
+controlSheet.setSheetControlButton(ControlSheet.CHEVRON)                             // Changes the conrtol button style to a chevron
             .setSheetControlButton(ControlSheet.NO_BUTTON)                           // Disables the control button
             .setSheetControlButton(ControlSheet.CUSTOM)                              // Sets the control button style to custom
             .setCustomCollapsedButtonDrawableId(R.drawable_control_button_collapsed) // Sets the button for the collapsed sheet
             .setCustomExpandedButtonDrawableId(R.drawable_control_button_expanded)   // Sets the button for the expanded sheet
-            .setSheetControlButton(ControlSheet.COGWHEEL);                           // Re-sets the contrl button to the default cogwheel
+            .setSheetControlButton(ControlSheet.COGWHEEL);                           // Re-sets the control button to the default cogwheel
 ```
 
  

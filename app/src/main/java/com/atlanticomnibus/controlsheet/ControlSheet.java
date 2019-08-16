@@ -157,20 +157,20 @@ import java.util.List;
  *
  * <p>Manage the sheet's control button</p>
  * <pre>
- *     controlSheet.setSheetControlButton(ControlSheet.CHEVRON)                             // Changes the conrtl button style to a chevron
+ *     controlSheet.setSheetControlButton(ControlSheet.CHEVRON)                             // Changes the control button style to a chevron
  *                 .setSheetControlButton(ControlSheet.NO_BUTTON)                           // Disables the control button
  *                 .setSheetControlButton(ControlSheet.CUSTOM)                              // Sets the control button style to custom
  *                 .setCustomCollapsedButtonDrawableId(R.drawable_control_button_collapsed) // Sets the button for the collapsed sheet
  *                 .setCustomExpandedButtonDrawableId(R.drawable_control_button_expanded)   // Sets the button for the expanded sheet
- *                 .setSheetControlButton(ControlSheet.COGWHEEL);                           // Re-sets the contrl button to the default cogwheel
+ *                 .setSheetControlButton(ControlSheet.COGWHEEL);                           // Re-sets the control button to the default cogwheel
  * </pre>
  *
  * <p>Manage the other controlstrip buttons</p>
- *     controlSheet.addControlStripButton(R.drawable.button_1, buttonOneOnclickListener) // Adds a button to the control strip with the specified {@link Drawable} {@View.OnClickListener}
- *                 .addControlStripButton(R.drawable.button_2, buttonTwoOnclickListener) // Adds another button to the control strip with the specified {@link Drawable} {@View.OnClickListener}
+ *     controlSheet.addControlStripButton(R.drawable.button_1, buttonOneOnclickListener) // Adds a button to the control strip with the specified {@link Drawable} {@link View.OnClickListener}
+ *                 .addControlStripButton(R.drawable.button_2, buttonTwoOnclickListener) // Adds another button to the control strip with the specified {@link Drawable} {@link View.OnClickListener}
  *                 .setButtonAnimationStyle(ControlSheet.NO_ANIMATION)                   // Disables button pressed animation
  *                 .setButtonAnimationStyle(ControlSheet.DIP_BUTTON)                     // Sets button pressed animation to {@link ControlSheet#DIP_BUTTON}
- *                 .removeControlStripButton(2);                                         // Removes the butotn from the 2nd (relative) position
+ *                 .removeControlStripButton(2);                                         // Removes the button from the 2nd (relative) position
  *                 .setButtonAnimationStyle(ControlSheet.SPIN_BUTTON                     // Resets button pressed animation to the default {@link ControlSheet#SPIN_BUTTON}
  * </pre>
  *
@@ -208,22 +208,26 @@ import java.util.List;
  */
 
 
+@SuppressWarnings("unused")
 public class ControlSheet extends LinearLayout {
 
     private final float DEFAULT_ELEVATION_VALUE = 24.0f, // Of the whole sheet
-                        CONTROLSTRIP_ELEVATION;          // Calculated fromscreen density in constructors
+                        CONTROLSTRIP_ELEVATION;          // Calculated from screen density in constructors
 
     private final int CONTROLSTRIP_HEIGHT,                       // This is a constant for now
                       CONTROLSTRIP_DEFAULT_HEIGHT_VALUE    = 52, // This much
                       ZILCH_NADA_NIL_BUT_NOT_ZERO          = -1, // Non-zero zero. :)
                       DEFAULT_VIEWPAGER_SIZE_LIMIT         =  5, // Got to be enough. If not, you're doing design wrong. (You cvn raise it anyway)
                       DEFAULT_CONTROL_BUTTON_PADDING_VALUE = 16, // Non-negotiable. :)
-                      CONTROL_BUTTON_PADDING,                    // This will eb calcualted int eh cinstructors
+                      CONTROL_BUTTON_PADDING,                    // This will eb calculated in the constructors
                       CONTROLSTRIP_DEFAULT_ELEVATION_VALUE =  2; // Not very high.
 
-    public static final int NO_BUTTON                 =   0, // It means "no button"in an ancient, fogotten language
+
+    // These are purposely public, linetr is wrong.
+    @SuppressWarnings("WeakerAccess")
+    public static final int NO_BUTTON                 =   0, // It means "no button"in an ancient, forgotten language
                             COGWHEEL                  =   1, // A wheel with cogs
-                            CHEVRON                   =   2, // Like a lttle arrow
+                            CHEVRON                   =   2, // Like a little arrow
                             CUSTOM                    =   3, // You're in control
                             NO_ANIMATION              =   0, // It's like having animation, only not.
                             SPIN_BUTTON               =   1, // The button will spin, (and magically change shapes mid-spin, if it1s the control button)
@@ -235,29 +239,29 @@ public class ControlSheet extends LinearLayout {
     private ViewPager viewPager;                        // A pager of views. (Or is it a view of pagers??)
     private ConstraintLayout controlStripLayout;        // This is the controlstrip itself
     private ImageView sheetControlButton;               // The "fixed" button at the end of the strip, which can open/close the sheet
-    private List<Integer> layoutIds;                    // A list of layout ids hekld by the viewpager
+    private List<Integer> layoutIds;                    // A list of layout ids held by the viewpager
     private ArrayList<ControlStripButton> stripButtons; // A list of buttons shown on the controlstrip
 
-    private boolean controlStripVisible, // If true, it menas the control strip is visible
+    private boolean controlStripVisible, // If true, it means the control strip is visible
                     isDynamic = false;   // If true, the widget was added from code, and no from XML
 
     private float mElevation; // The melevation of the sheet
 
     private int buttonColor,               // It's the colour of the buttons
                 sheetPeekHeight,           // link BottomSheet's peekHeight
-                controlButtonStyle,        // Cogwhel, chevron, or custom (user defined)
-                vpSizeLimit,               // The number of pages the virewpager can have. Since they need to be held in memory
+                controlButtonStyle,        // Cogwheel, chevron, or custom (user defined)
+                vpSizeLimit,               // The number of pages the ViewPager can have. Since they need to be held in memory
                 buttonAnimationStyle,      // Spin or dip or none
-                customCollapsedDrawableId, // When controlSheetButton's stle is cutsom, you cna set a your own drawable.
-                customExpandedDrawableId,  // When controlSheetButton's stle is cutsom, you cna set a your own drawable.
+                customCollapsedDrawableId, // When controlSheetButton's style is custom, you cna set a your own drawable.
+                customExpandedDrawableId,  // When controlSheetButton's style is custom, you cna set a your own drawable.
                 numberingModeOffset;             // Where to start numbers from
 
     private Drawable sheetCollapsedButtonDrawable, // The Drawable from the id above
-                     sheetExpandedButtondrawable;  // The Drawable from the id above
+                     sheetExpandedButtonDrawable;  // The Drawable from the id above
 
     private BottomSheetBehavior sheetBehavior;                     // The layout_behaviour of the sheet
-    private ControlSheetInflatedListener inflatedListener;         // Listener to listen to everythign beign laid out
-    private ControlSheetStateChangedListener stateChangedListener; // listener to isten to state changes in the BottomSheetBehaviour
+    private ControlSheetInflatedListener inflatedListener;         // Listener to listen to everything being laid out
+    private ControlSheetStateChangedListener stateChangedListener; // Listener to listen to state changes in the BottomSheetBehaviour
 
 
 
@@ -375,7 +379,7 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * Reads the attribztes from the XML
+     * Reads da attributez from the XML
      * @param context the context
      * @param attrs he Attributes to read
      */
@@ -395,9 +399,19 @@ public class ControlSheet extends LinearLayout {
 
             String idsString = a.getString(R.styleable.ControlSheet_layout_ids);
             if (!TextUtils.isEmpty(idsString)) {
+                //noinspection ConstantConditions
                 layoutIds = resolveIds(idsString);
             }
-            buttonColor=a.getColor(R.styleable.ControlSheet_button_color, resolveButtonColor());
+
+            int defaultButtonColor;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                defaultButtonColor=resolveButtonColor();
+            } else {
+                defaultButtonColor=Color.BLACK;
+            }
+
+            buttonColor=a.getColor(R.styleable.ControlSheet_button_color, defaultButtonColor);
             controlButtonStyle = a.getInt(R.styleable.ControlSheet_sheet_control_button_style, COGWHEEL);
             vpSizeLimit = a.getInt(R.styleable.ControlSheet_viewpager_max_pages, DEFAULT_VIEWPAGER_SIZE_LIMIT);
             buttonAnimationStyle = a.getInt(R.styleable.ControlSheet_button_animation_style, SPIN_BUTTON);
@@ -471,6 +485,7 @@ public class ControlSheet extends LinearLayout {
 
                     sheetBehavior.setHideable(false);
                     sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                        @SuppressLint("SwitchIntDef")
                         @Override
                         public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
@@ -490,7 +505,7 @@ public class ControlSheet extends LinearLayout {
                                     break;
                                 }
                                 case BottomSheetBehavior.STATE_EXPANDED: {
-                                    //in case it ws dragged open all the way and never ebtered "settling state
+                                    //in case it ws dragged open all the way and never entered "settling" state
                                     if (sheetControlButton.getTag() != "open") {
                                         updateSheetControlButton(true);
                                         sheetControlButton.setTag("open");
@@ -498,7 +513,7 @@ public class ControlSheet extends LinearLayout {
                                     break;
                                 }
                                 case BottomSheetBehavior.STATE_COLLAPSED: {
-                                    //in case it ws dragged closed all the way and never ebtered "settling state
+                                    //in case it ws dragged closed all the way and never entered "settling" state
                                     if (sheetControlButton.getTag() != "closed") {
                                         updateSheetControlButton(false);
                                         sheetControlButton.setTag("closed");
@@ -539,7 +554,7 @@ public class ControlSheet extends LinearLayout {
      * <p>Set up how positions and similar numbers will be treated 0 based or "natural."</p>
      *
      * <p>There are two valid modes {@link ControlSheet#ZERO_BASED} ({@value ControlSheet#ZERO_BASED}), which means the
-     * first number is 0 as in traditional software developemtn, 0 marking the first position, and
+     * first number is 0 as in traditional software development, 0 marking the first position, and
      * {@link ControlSheet#NATURAL} ({@value ControlSheet#NATURAL}) meaning a more intuitive system, where the 1st position is 1.</p>
      *
      * <p>The default is zero based so that people don1t get pissed off expecting 0 to mean 1...</p>
@@ -605,10 +620,10 @@ public class ControlSheet extends LinearLayout {
     /**
      * <p>Sets the sheet's peek height in {@link TypedValue#COMPLEX_UNIT_DIP}</p>
      *
-     * <p>Note: Whne the control strip is visible, the default peek height is the controlstrip's own height.
+     * <p>Note: When the control strip is visible, the default peek height is the controlstrip's own height.
      * Any value defined here will be added to that so that <em>more</em> of the sheet would be visible.
      * When the control strip is turned off with {@link ControlSheet#setHasControlStrip(boolean)} set to {@code false},
-     * a peek height set here will control the sheet1s totqal peek height</p>
+     * a peek height set here will control the sheet1s total peek height</p>
      *
      * @param peekHeight peek height in {@link TypedValue#COMPLEX_UNIT_DIP}
      */
@@ -620,10 +635,10 @@ public class ControlSheet extends LinearLayout {
     /**
      * <p>Sets the sheet's peek height in any valid unit from {@link TypedValue}</p>
      *
-     * <p>Note: Whne the control strip is visible, the default peek height is the controlstrip's own height.
+     * <p>Note: When the control strip is visible, the default peek height is the controlstrip's own height.
      * Any value defined here will be added to that so that <em>more</em> of the sheet would be visible.
      * When the control strip is turned off with {@link ControlSheet#setHasControlStrip(boolean)} set to {@code false},
-     * a peek height set here will control the sheet1s totqal peek height</p>
+     * a peek height set here will control the sheet's total peek height</p>
      *
      * @param peekHeight peek height in any valid unit from {@link TypedValue}
      */
@@ -669,13 +684,13 @@ public class ControlSheet extends LinearLayout {
     /**
      * <p>Sets the {@link ViewPager's} size limit, that is the maximum pages it can hold. </p>
      *
-     * <p>Size limit is necessary to avoid using too much memeory. Since the {@link WrappingViewPager} that is used will
+     * <p>Size limit is necessary to avoid using too much memory. Since the {@link WrappingViewPager} that is used will
      * set its size according to its children, we need to kep the children in memory to avoid changing sizes on paging
      * (so the {@link ViewPager} will conform to the tallest child and keep tis height. If the children were to be dynamically loaded,
      * the pager's size would change, and with the the sheet's height too</p>
      *
-     * ToDo: This needs some attentipon. Pager should measure once, and keep the tallest measured size forever, without
-     *       having to keep its children in memory. That way this whole concept can be deporeceted, and probably even the
+     * ToDo: This needs some attention. Pager should measure once, and keep the tallest measured size forever, without
+     *       having to keep its children in memory. That way this whole concept can be deprecated, and probably even the
      *       {@link WrappingViewPager} itself as well
      * '
      * @param maxSize Maximum size of the pager
@@ -716,23 +731,25 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Add a single layout to the {@link ViewPager} to the specified position (starting form 1)</p>
+     * <p>Add a single layout to the {@link ViewPager} to the specified position (starting form 0 or 1, depending on the setup)</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
      * @param layoutId The id of the layout to add
-     * @param position The position t add the layout to (starting form 1)
+     * @param position The position t add the layout to (starting form 0 or 1, depending on the setup)
      */
     public ControlSheet addSheetPagerLayout(int layoutId, @IntRange(from=0)  int position){
         return handlePagerLayouts(layoutId, position, false);
     }
 
     /**
-     * <p>Remove layout in the specified position 8starting form 1) from the {@link ViewPager}.</p>
+     * <p>Remove layout in the specified position (starting form 0 or 1, depending on the setup) from the {@link ViewPager}.</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position The position of the layout to remove (starting from 1)
+     * @param position The position of the layout to remove (starting form 0 or 1, depending on the setup)
      * @return A {@link ControlSheet} object for method chaining
      */
     public ControlSheet removeSheetPagerLayout(@IntRange(from=0) int position){
@@ -748,11 +765,12 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>eturns a single layout id set to the {@link ViewPager} in the specified positon</p>
+     * <p>Returns a single layout id set to the {@link ViewPager} in the specified position</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position The position of the layout to get the id of (starting from 1)
+     * @param position The position of the layout to get the id of (starting form 0 or 1, depending on the setup)
      * @return The id of the layout in the specified position, or 0 if the position is not valid
      */
     public int getSheetPagerLayoutIdAtPosition(@IntRange(from=0) int position){
@@ -777,7 +795,7 @@ public class ControlSheet extends LinearLayout {
     /**
      * Returns a {@link List<Object>} of all {@link ViewPager} children from all of its pages
      *
-     * @returna {@link List<Object>} of all {@link ViewPager} children from all of its pages
+     * @return a {@link List<Object>} of all {@link ViewPager} children from all of its pages
      */
     public List<Object> getAllPagerItems(){
 
@@ -855,13 +873,14 @@ public class ControlSheet extends LinearLayout {
 
     /**
      * <p>Internal method to handle dynamically adding and removing pages from the {@link ViewPager} to/from the
-     * specified position (starting from 1). It will call {@link ControlSheet#setUpViewPager()} internaly, so you
+     * specified position (starting form 0 or 1, depending on the setup). It will call {@link ControlSheet#setUpViewPager()} internally, so you
      * don't need to worry abut that</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
      * @param id The id of the layout ot add or remove
-     * @param position position to add or remove to/from (starting form 1)
+     * @param position position to add or remove to/from (starting form 0 or 1, depending on the setup)
      * @param removing Whether we1re removing the layout (true of removing)
      * @return A {@link ControlSheet} object for method chaining
      */
@@ -896,11 +915,10 @@ public class ControlSheet extends LinearLayout {
 
 
     /**
-     * Internal method to resolve layout ids from the {@ilnk String} provided in the layout XML
+     * Internal method to resolve layout ids from the {@link String} provided in the layout XML
      * @param idString String of ids from XML (comma separated)
      * @return An ArrayList of ids
      */
-    @Nullable
     private ArrayList<Integer> resolveIds(String idString) {
         ArrayList<Integer> ids = new ArrayList<>();
 
@@ -1000,7 +1018,7 @@ public class ControlSheet extends LinearLayout {
     ////User Buttons////
 
     /**
-     * <p>Set the contro strip buttons' animation style.</p>
+     * <p>Set the controlstrip buttons' animation style.</p>
      *  <p>Accepted values are
      *     <ul>
      *          <li>Do not animate buttons {@link ControlSheet#NO_ANIMATION} ({@value ControlSheet#NO_ANIMATION})</li>
@@ -1026,7 +1044,7 @@ public class ControlSheet extends LinearLayout {
      * <p>Note: When the strip is turned off,a custom peek height should be set with {@link ControlSheet#setSheetPeekHeight(int)} or
      * {@link ControlSheet#setSheetPeekHeight(int, int)}, otherwise the sheet will only be expandable code.</p>
      *
-     * @param visible Boolean, whether the stripis visible
+     * @param visible Boolean, whether the strip is visible
      * @return A {@link ControlSheet} object for method chaining
      */
     public ControlSheet setHasControlStrip(boolean visible){
@@ -1038,11 +1056,11 @@ public class ControlSheet extends LinearLayout {
      * <p>Dynamically add a button to the control strip. You must specify a {@link res.drawable} id and optionally an
      * {@link View.OnClickListener} which will be automatically applied to the button.</p>
      *
-     * <p>Buttons will appear in the rder in which they were attachd, stretching out between the control strip's start side and the sheet
+     * <p>Buttons will appear in the order in which they were attached, stretching out between the control strip's start side and the sheet
      * control button if visible, or the controls trip's end side, if not</p>
      *
      * @param drawableId the id of the button1s drawable
-     * @param onClickListener {@link View.OnClickListener} to set on the butotn 8can be null)
+     * @param onClickListener {@link View.OnClickListener} to set on the button (can be null)
      * @return A {@link ControlSheet} object for method chaining
      */
     public ControlSheet addControlStripButton(final int drawableId, @Nullable final View.OnClickListener onClickListener){
@@ -1051,9 +1069,10 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Enable or disable a control strip button in the specified position (starting from 1). Disabled buttons are not clickable and also dimmed</p>
+     * <p>Enable or disable a control strip button in the specified position (starting form 0 or 1, depending on the setup). Disabled buttons are not clickable and also dimmed</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
      * @param position position of the button to be enabled or disabled (starting form one)
      * @param isEnabled boolean value {@code true} for enabled and {@code false} for disabled
@@ -1069,12 +1088,13 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Get a {@link ControlStripButton} object for direct manipualation from the specified position (starting form 1). {(@link ControlStripButton}s
-     * are basically glirified ImageViews with a few extras.) You can not get the sheet control button this way, sorry.</p>
+     * <p>Get a {@link ControlStripButton} object for direct manipulation from the specified position (starting form 0 or 1, depending on the setup). {(@link ControlStripButton}s
+     * are basically glorified ImageViews with a few extras.) You can not get the sheet control button this way, sorry.</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position of the button to get (startng from 1)
+     * @param position of the button to get (starting form 0 or 1, depending on the setup)
      * @return A {@link ControlStripButton} object
      */
     public ControlStripButton getControlStripButton(@IntRange(from=0) int position){
@@ -1087,11 +1107,12 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Check whether the button in the specified position (starting form 1) is currently enabled</p>
+     * <p>Check whether the button in the specified position (starting form 0 or 1, depending on the setup) is currently enabled</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position Position of the butotn to check 8starting form 1)
+     * @param position Position of the button to check (starting form 0 or 1, depending on the setup)
      * @return boolean of the button's "enabledness"
      */
     public boolean controlStripButtonIsEnabled(@IntRange(from = 0) int position){
@@ -1104,11 +1125,12 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Get the current {@link Drawable} set on the control strip button in the specified position (starting from 1).</p>
+     * <p>Get the current {@link Drawable} set on the control strip button in the specified position (starting form 0 or 1, depending on the setup).</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position of the button to get {@link Drawable} of (starting from 1)
+     * @param position of the button to get {@link Drawable} of (starting form 0 or 1, depending on the setup)
      * @return {@link Drawable} that is set on  the button
      */
     public Drawable getControlStripButtonDrawable(@IntRange(from = 0) int position){
@@ -1121,11 +1143,12 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * <p>Remove a control strip button form the specified position (starting from 1).</p>
+     * <p>Remove a control strip button form the specified position (starting form 0 or 1, depending on the setup).</p>
      *
-     * <p>Note: The numbering starts from <strong>1, <em>not</em> from 0</strong>, corresponding to the layout's visual position </p>
+     * <p>Note: The numbering starts from 0 by default, but this can be changed to start form 1, 
+     * corresponding to the layout's visual position, by using {@link ControlSheet#setNumberingMode(int)} </p>
      *
-     * @param position of the butotn to remove (starting from 1)
+     * @param position of the button to remove (starting form 0 or 1, depending on the setup)
      */
     public ControlSheet removeControlStripButton(@IntRange(from = 0) int position){
         if (position < controlStripLayout.getChildCount()) {
@@ -1148,7 +1171,7 @@ public class ControlSheet extends LinearLayout {
      */
     public ControlSheet setControlStripButtonsColor(@ColorInt int color){
         buttonColor=color;
-        return updateButtonColous();
+        return updateButtonColors();
     }
 
 
@@ -1156,11 +1179,11 @@ public class ControlSheet extends LinearLayout {
 
 
     /**
-     * Internal methd to update every button's colour
+     * Internal method to update every button's colour
      *
      * @return A {@link ControlSheet} object for method chaining
      */
-    private ControlSheet updateButtonColous(){
+    private ControlSheet updateButtonColors(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (sheetControlButton.getDrawable() != null) {
@@ -1182,11 +1205,12 @@ public class ControlSheet extends LinearLayout {
     }
 
     /**
-     * An attempot to resolve he theme's primary colour to set to the buttons, if not other colour is
+     * An attempt to resolve he theme's primary colour to set to the buttons, if not other colour is
      * specified. Defaults to black if primary colour cannot be resolved for any reason.
      *
      * @return The resolved {@link androidx.annotation.ColorInt}
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private int resolveButtonColor() {
 
         if (buttonColor == Color.TRANSPARENT) {
@@ -1243,16 +1267,17 @@ public class ControlSheet extends LinearLayout {
      * @param sheetIsExpanded to know which way the animation should go
      */
     private void updateSheetControlButton(boolean sheetIsExpanded){
-        ViewAnimations.animateSheetControlButton(sheetControlButton, sheetIsExpanded, sheetExpandedButtondrawable, sheetCollapsedButtonDrawable, buttonAnimationStyle, controlButtonStyle);
+        ViewAnimations.animateSheetControlButton(sheetControlButton, sheetIsExpanded, sheetExpandedButtonDrawable, sheetCollapsedButtonDrawable, buttonAnimationStyle, controlButtonStyle);
     }
 
     /**
      * <p>This is a <strong>poor</strong> way to resolve and set the {@link Drawable}(s) of the sheet control button</p>
      *
-     * ToDO: there surely is a better (cleaner) way to do this, only I had very little time, and this seemdthe most straightforward...
+     * ToDO: there surely is a better (cleaner) way to do this, only I had very little time, and this seemed the most straightforward...
      *
      * @return A {@link ControlSheet} object for method chaining
      */
+    @SuppressWarnings("UnusedReturnValue")
     private ControlSheet setUpSheetControlButton(){
 
         if(sheetControlButton==null){
@@ -1275,7 +1300,7 @@ public class ControlSheet extends LinearLayout {
                     sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_expand_less_18dp, theme);
                 } else if (controlButtonStyle==COGWHEEL) {
                     sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_settings_18dp, theme);
-                    sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp, theme);
+                    sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp, theme);
                 } else {
                     if(customCollapsedDrawableId==0){
                         sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_settings_18dp, theme);
@@ -1288,27 +1313,27 @@ public class ControlSheet extends LinearLayout {
                         }
                     }
                     if(customExpandedDrawableId==0){
-                        sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp, theme);
+                        sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp, theme);
                     } else {
                         try {
-                            sheetExpandedButtondrawable=getResources().getDrawable(customExpandedDrawableId, theme);
+                            sheetExpandedButtonDrawable =getResources().getDrawable(customExpandedDrawableId, theme);
                         } catch (Resources.NotFoundException e){
                             e.printStackTrace();
-                            sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp, theme);
+                            sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp, theme);
                         }
                     }
                 }
 
                 sheetCollapsedButtonDrawable.setTint(buttonColor);
-                if(sheetExpandedButtondrawable!=null){
-                    sheetExpandedButtondrawable.setTint(buttonColor);
+                if(sheetExpandedButtonDrawable !=null){
+                    sheetExpandedButtonDrawable.setTint(buttonColor);
                 }
             } else {
                 if(controlButtonStyle==CHEVRON) {
                     sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_expand_less_18dp);
                 } else if (controlButtonStyle==COGWHEEL) {
                     sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_settings_18dp);
-                    sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp);
+                    sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp);
                 } else {
                     if(customCollapsedDrawableId==0){
                         sheetCollapsedButtonDrawable=getResources().getDrawable(R.drawable.ic_settings_18dp);
@@ -1321,20 +1346,20 @@ public class ControlSheet extends LinearLayout {
                         }
                     }
                     if(customExpandedDrawableId==0){
-                        sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp);
+                        sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp);
                     } else {
                         try {
-                            sheetExpandedButtondrawable = getResources().getDrawable(customExpandedDrawableId);
+                            sheetExpandedButtonDrawable = getResources().getDrawable(customExpandedDrawableId);
                         } catch (Resources.NotFoundException e){
                             e.printStackTrace();
-                            sheetExpandedButtondrawable=getResources().getDrawable(R.drawable.ic_close_18dp);
+                            sheetExpandedButtonDrawable =getResources().getDrawable(R.drawable.ic_close_18dp);
                         }
                     }
                 }
 
                 sheetCollapsedButtonDrawable.setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
-                if(sheetExpandedButtondrawable!=null){
-                    sheetExpandedButtondrawable.setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
+                if(sheetExpandedButtonDrawable !=null){
+                    sheetExpandedButtonDrawable.setColorFilter(buttonColor, PorterDuff.Mode.MULTIPLY);
                 }
             }
 
@@ -1342,8 +1367,8 @@ public class ControlSheet extends LinearLayout {
                 //We've got no behaviour yet
                 sheetControlButton.setImageDrawable(sheetCollapsedButtonDrawable);
             } else {
-                if (sheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED && sheetExpandedButtondrawable != null) {
-                    sheetControlButton.setImageDrawable(sheetExpandedButtondrawable);
+                if (sheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED && sheetExpandedButtonDrawable != null) {
+                    sheetControlButton.setImageDrawable(sheetExpandedButtonDrawable);
                 } else {
                     sheetControlButton.setImageDrawable(sheetCollapsedButtonDrawable);
                 }
@@ -1359,9 +1384,10 @@ public class ControlSheet extends LinearLayout {
      * since we would not know where to put those or what to do with them. </p>
      *
      * @param drawableId the id of the drawable
-     * @param onClickListener optional onclicklistener
+     * @param onClickListener optional {@link android.view.View.OnClickListener}
      * @return A {@link ControlSheet} object for method chaining
      */
+    @SuppressWarnings("UnusedReturnValue")
     private ControlSheet attachControlStripButton(final int drawableId, @Nullable final View.OnClickListener onClickListener){
 
         ControlStripButton button = new ControlStripButton(getContext(),
@@ -1453,7 +1479,7 @@ public class ControlSheet extends LinearLayout {
 
     /**
      * Set the {@link ControlSheetInflatedListener}
-     * @param listener Listener to liste with
+     * @param listener Listener to listen with
      * @return A {@link ControlSheet} object for method chaining
      */
     public ControlSheet addControlSheetInflatedListener(ControlSheetInflatedListener listener) {

@@ -22,6 +22,7 @@
 
 package com.atlanticomnibus.controlsheet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,9 +30,11 @@ import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.appcompat.widget.AppCompatImageView;
 
+@SuppressWarnings("unused")
+@SuppressLint("ViewConstructor")
 public class ControlStripButton extends AppCompatImageView implements View.OnTouchListener {
 
-    int animationStyle;
+    private final int animationStyle;
 
     public ControlStripButton(Context context, int padding, int animationStyle, final View.OnClickListener onClickListener){
         super(context);
@@ -54,12 +57,14 @@ public class ControlStripButton extends AppCompatImageView implements View.OnTou
     }
 
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public boolean performClick() {
 
-        // This is not exactly used at the moment, but you can cusotmise the buttons to have a
+        // This is not exactly used at the moment, but you can customise the buttons to have a
         // uniform onClick behaviour that executes before the supplied onClick method.
         // But only if you want to.
+        // Lint warning for empty method is suppressed, just remove the hint of you use this
 
         return super.performClick();
     }

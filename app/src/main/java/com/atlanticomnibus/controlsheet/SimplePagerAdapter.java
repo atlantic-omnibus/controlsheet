@@ -33,11 +33,11 @@ import androidx.viewpager.widget.PagerAdapter;
 import java.util.List;
 
 /**
- * A vwry simple adapter for the ViewPager
+ * A very simple adapter for the ViewPager
  */
-public class SimplePagerAdapter extends PagerAdapter {
+class SimplePagerAdapter extends PagerAdapter {
 
-    private Context mContext;
+    private final Context mContext;
     private final List<Integer> layoutCollection;
 
     public SimplePagerAdapter(Context context, List<Integer> layouts) {
@@ -46,12 +46,13 @@ public class SimplePagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup collection, int position, Object view) {
+    public void destroyItem(@NonNull ViewGroup collection, int position, @NonNull Object view) {
         collection.removeView((View) view);
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup collection, int position) {
+    public Object instantiateItem(@NonNull ViewGroup collection, int position) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewGroup layout;
         layout=(ViewGroup) inflater.inflate(layoutCollection.get(position), collection, false);

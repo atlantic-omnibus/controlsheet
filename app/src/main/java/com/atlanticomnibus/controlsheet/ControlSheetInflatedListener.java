@@ -24,6 +24,7 @@ package com.atlanticomnibus.controlsheet;
 
 import androidx.viewpager.widget.ViewPager;
 
+@SuppressWarnings("unused")
 public interface ControlSheetInflatedListener {
 
     void onControlSheetInflated(ViewPager viewPager);

@@ -97,7 +97,7 @@ class ViewAnimations {
 
     /**
      * Simple animation to spin a view 360degrees around its on midpoint. Used (here) to animate buttons
-     * @param view
+     * @param view The {@link View} to spin
      */
     private static void spinButton(final View view) {
         view.setPivotY((float) view.getMeasuredHeight() / 2.0f);

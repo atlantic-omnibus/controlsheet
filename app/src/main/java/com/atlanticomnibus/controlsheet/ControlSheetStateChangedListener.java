@@ -22,6 +22,7 @@
 
 package com.atlanticomnibus.controlsheet;
 
+@SuppressWarnings("unused")
 public interface ControlSheetStateChangedListener {
     void controlSheetStateChanged(int newState);
 
